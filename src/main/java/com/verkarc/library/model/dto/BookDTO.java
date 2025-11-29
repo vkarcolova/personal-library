@@ -17,8 +17,5 @@ public class BookDTO {
     private GenreDTO genre;
     private BookStatus status;
     private String coverUrl;
-    private Integer progressPages;
-    private Integer totalPages;
-    private Integer rating;
-    private String note;
+    private BookProgressDTO bookProgress;
 }

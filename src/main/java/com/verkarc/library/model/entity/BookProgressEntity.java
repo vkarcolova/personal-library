@@ -18,7 +18,7 @@ public class BookProgressEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_progress_id_seq")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "book_id")
     private BookEntity book;
 

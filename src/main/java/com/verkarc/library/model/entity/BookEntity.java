@@ -34,6 +34,10 @@ public class BookEntity {
 
     private String coverUrl;
 
+    @OneToOne
+    @JoinColumn(name = "book_progress_id")
+    private BookProgressEntity bookProgress;
+
 }
 
 
