@@ -5,6 +5,9 @@ import java.util.List;
 public interface GenreService {
     List<GenreEntity> findAll();
 
+    GenreEntity findByGenre(String genre);
+
+
     GenreEntity save(GenreEntity genreEntity);
 
     void delete(Long id);

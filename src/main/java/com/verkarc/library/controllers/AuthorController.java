@@ -29,7 +29,7 @@ public class AuthorController {
     @PostMapping(path = "/authors")
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody AuthorDTO authorDTO){
         if(authorDTO.getName() == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if(authorService.existsByName(authorDTO.getName())) return new ResponseEntity<>(HttpStatus.CONFLICT);;
+        if(authorService.existsByName(authorDTO.getName())) return new ResponseEntity<>(HttpStatus.CONFLICT);
         AuthorEntity authorEntity = authorMapper.mapFromDtoToEntity(authorDTO);
         AuthorEntity savedEntity = authorService.save(authorEntity);
         return new ResponseEntity<>(authorMapper.mapFromEntityToDto(savedEntity),HttpStatus.CREATED);
@@ -60,6 +60,8 @@ public class AuthorController {
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        if(authorDTO.getName() == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(authorService.existsByName(authorDTO.getName())) return new ResponseEntity<>(HttpStatus.CONFLICT);
         authorDTO.setId(id);
         AuthorEntity authorEntity = authorMapper.mapFromDtoToEntity(authorDTO);
         AuthorEntity updatedEntity = authorService.update(id, authorEntity);
