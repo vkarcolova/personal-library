@@ -1,6 +1,6 @@
 package com.verkarc.library.mappers;
 
-public interface Mapper<Entity,Dto>{
-    Dto mapFromEntityToDto(Entity a);
-    Entity mapFromDtoToEntity(Dto b);
+public interface Mapper<E,D>{
+    D mapFromEntityToDto(E e);
+    E mapFromDtoToEntity(D d);
 }

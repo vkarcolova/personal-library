@@ -9,6 +9,8 @@ import org.modelmapper.convention.MatchingStrategies;
 public class MapperConfig {
     @Bean
     public ModelMapper modelMapper(){
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
         return new ModelMapper();
     }
 }

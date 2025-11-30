@@ -4,4 +4,9 @@ import java.util.List;
 
 public interface GenreService {
     List<GenreEntity> findAll();
+
+    GenreEntity save(GenreEntity genreEntity);
+
+    void delete(Long id);
+
 }

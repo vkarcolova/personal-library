@@ -34,10 +34,9 @@ public class BookEntity {
 
     private String coverUrl;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "book_progress_id")
     private BookProgressEntity bookProgress;
-
 }
 
 

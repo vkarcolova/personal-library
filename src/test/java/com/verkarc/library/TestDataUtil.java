@@ -1,5 +1,6 @@
 package com.verkarc.library;
 
+import com.verkarc.library.model.dto.AuthorDTO;
 import com.verkarc.library.model.entity.AuthorEntity;
 import com.verkarc.library.model.entity.BookEntity;
 
@@ -43,6 +44,17 @@ public final class TestDataUtil {
         return BookEntity.builder()
                 .title("The Last Ember")
                 .author(createTestAuthorC())
+                .build();
+    }
+
+    public static AuthorDTO createTestAuthorDTOA() {
+        return AuthorDTO.builder()
+                .name("Abigail Rose")
+                .build();
+    }
+    public static AuthorDTO createTestAuthorDTOB() {
+        return AuthorDTO.builder()
+                .name("Second Rose")
                 .build();
     }
 }

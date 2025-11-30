@@ -18,8 +18,7 @@ public class BookProgressEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "book_progress_id_seq")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "book_id")
+    @OneToOne(mappedBy = "book")
     private BookEntity book;
 
     @Column(columnDefinition = "TEXT")
