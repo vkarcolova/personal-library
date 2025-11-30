@@ -50,4 +50,9 @@ public class AuthorServiceImpl implements AuthorService {
     public boolean exists(Long id) {
         return authorRepository.existsById(id);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return authorRepository.existsByName(name);
+    }
 }

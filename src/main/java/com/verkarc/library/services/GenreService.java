@@ -9,4 +9,8 @@ public interface GenreService {
 
     void delete(Long id);
 
+    boolean exists(Long id);
+
+    boolean existsByName(String name);
+
 }

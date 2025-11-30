@@ -25,6 +25,16 @@ public class AuthorController {
         this.authorMapper = authorMapper;
     }
 
+
+    @PostMapping(path = "/authors")
+    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody AuthorDTO authorDTO){
+        if(authorDTO.getName() == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(authorService.existsByName(authorDTO.getName())) return new ResponseEntity<>(HttpStatus.CONFLICT);;
+        AuthorEntity authorEntity = authorMapper.mapFromDtoToEntity(authorDTO);
+        AuthorEntity savedEntity = authorService.save(authorEntity);
+        return new ResponseEntity<>(authorMapper.mapFromEntityToDto(savedEntity),HttpStatus.CREATED);
+    }
+
     @GetMapping(path = "/authors/{id}")
     public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable("id") Long id){
         Optional<AuthorEntity> author = authorService.getOne(id);
@@ -41,22 +51,26 @@ public class AuthorController {
         for(AuthorEntity entity : authorEntityList){
             result.add(authorMapper.mapFromEntityToDto(entity));
         }
-//        List<AuthorDTO> result2 = authorEntityList.stream()
-//                .map(authorMapper::mapFromEntityToDto)
-//                .collect(Collectors.toList());
-//
-//        List<AuthorDTO> result3 = authorEntityList.stream()
-//                .map(entity -> authorMapper.mapFromEntityToDto(entity))
-//                .collect(Collectors.toList());
-
         return result;
     }
 
-    @PostMapping(path = "/authors")
-    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody AuthorDTO authorDTO){
+    @PutMapping(path = "/authors/{id}")
+    public ResponseEntity<AuthorDTO>  updateAuthor(@PathVariable("id") Long id, @RequestBody AuthorDTO authorDTO){
+        if(!authorService.exists(id))
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        authorDTO.setId(id);
         AuthorEntity authorEntity = authorMapper.mapFromDtoToEntity(authorDTO);
-        AuthorEntity savedEntity = authorService.save(authorEntity);
-        return new ResponseEntity<>(authorMapper.mapFromEntityToDto(savedEntity),HttpStatus.CREATED);
+        AuthorEntity updatedEntity = authorService.update(id, authorEntity);
+        return new ResponseEntity<>(authorMapper.mapFromEntityToDto(updatedEntity),HttpStatus.OK);
     }
 
-}
+    @DeleteMapping(path = "/authors/{id}")
+    public ResponseEntity deleteAuthor(@PathVariable("id") Long id){
+        if(authorService.exists(id)) {
+            authorService.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+ }

@@ -12,4 +12,7 @@ public interface AuthorRepository extends JpaRepository<AuthorEntity, Long> {
     Iterable<AuthorEntity> findAuthorsStartsWithLetter(@Param("letter") String letter);
 
     Iterable<AuthorEntity> findByNameStartingWith(String prefix);
+
+    boolean existsByName(String name);
+
 }
