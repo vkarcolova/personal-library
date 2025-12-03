@@ -1,11 +1,14 @@
 package com.verkarc.library.services;
 import com.verkarc.library.model.entity.GenreEntity;
 import java.util.List;
+import java.util.Optional;
 
 public interface GenreService {
     List<GenreEntity> findAll();
 
-    GenreEntity findByGenre(String genre);
+    Optional<GenreEntity> findByGenre(String genre);
+
+    Optional<GenreEntity> findById(Long id);
 
 
     GenreEntity save(GenreEntity genreEntity);

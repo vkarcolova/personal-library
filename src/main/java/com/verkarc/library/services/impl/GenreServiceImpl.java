@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
@@ -22,8 +24,13 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public GenreEntity findByGenre(String genre) {
-        return genreRepository.findByGenre(genre);
+    public Optional<GenreEntity> findByGenre(String genre) {
+        return genreRepository.findByName(genre);
+    }
+
+    @Override
+    public Optional<GenreEntity> findById(Long id) {
+        return genreRepository.findById(id);
     }
 
     @Override

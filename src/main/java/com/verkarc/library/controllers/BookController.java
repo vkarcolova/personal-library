@@ -31,18 +31,17 @@ public class BookController {
     private final GenreService genreService;
     private final BookService bookService;
     private final BookProgressService bookProgressService;
-    private final BookProgressEntity bookProgressEntity;
     private Mapper<BookEntity, BookDTO> bookMapper;
     private final Mapper<BookProgressEntity, BookProgressDTO> bookProgressMapper;
 
     public BookController(AuthorService authorService, GenreService genreService,
-                          BookService bookService, BookProgressService bookProgressService, BookProgressEntity bookProgressEntity,
-                          Mapper<BookEntity, BookDTO> bookMapper, Mapper<BookProgressEntity, BookProgressDTO> bookProgressMapper) {
+                          BookService bookService, BookProgressService bookProgressService,
+                          Mapper<BookEntity, BookDTO> bookMapper, Mapper<BookProgressEntity,
+                    BookProgressDTO> bookProgressMapper) {
         this.authorService = authorService;
         this.genreService = genreService;
         this.bookService = bookService;
         this.bookProgressService = bookProgressService;
-        this.bookProgressEntity = bookProgressEntity;
         this.bookMapper = bookMapper;
         this.bookProgressMapper = bookProgressMapper;
     }
@@ -57,36 +56,53 @@ public class BookController {
                 author = authorService.getOne(bookDTO.getAuthor().getId())
                         .orElse(author = null);
                 if(!existing && author != null) existing = bookService.existsByTitleAndAuthor(bookDTO.getTitle(),author);
-            } else {
-                author = new AuthorEntity();
-                author.setName(bookDTO.getAuthor().getName());
-                if(!authorService.existsByName(author.getName())) author = authorService.save(author);
             }
+            if(bookDTO.getAuthor().getName() != null && author == null){
+                author = authorService.getByName(bookDTO.getAuthor().getName())
+                        .orElseGet(() -> {
+                            AuthorEntity newAuthor = new AuthorEntity();
+                            newAuthor.setName(bookDTO.getAuthor().getName());
+                            if (!authorService.existsByName(newAuthor.getName())) {
+                                newAuthor = authorService.save(newAuthor);
+                            }
+                            return newAuthor;
+                        });
+
+                if(!existing && author != null) existing = bookService.existsByTitleAndAuthor(bookDTO.getTitle(),author);}
         }
+        if(existing) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
         GenreEntity genre = null;
-        if (bookDTO.getGenre()  != null && bookDTO.getGenre().getName() != null) {
-            GenreEntity genreEntity = genreService.findByGenre(bookDTO.getGenre().getName());
-            if(genreEntity != null) genre = genreEntity;
-            else {
-                genre.setName(bookDTO.getGenre().getName());
-                genre = genreService.save(genre);
+        if (bookDTO.getGenre() != null ) {
+            if (bookDTO.getGenre().getId() != null) {
+                genre = genreService.findById(bookDTO.getGenre().getId())
+                        .orElse(genre = null);
+            }
+            else if(bookDTO.getAuthor().getName() != null && genre == null){
+                genre = genreService.findByGenre(bookDTO.getGenre().getName())
+                        .orElseGet(() -> {
+                            GenreEntity newGenre = new GenreEntity();
+                            newGenre.setName(bookDTO.getGenre().getName());
+                            newGenre = genreService.save(newGenre);
+                            return newGenre;
+                        });
             }
         }
-
+        bookEntity.setGenre(genre);
+        bookEntity.setAuthor(author);
+        bookEntity.setBookProgress(null);
+        BookEntity savedBook = bookService.save(bookEntity);
         BookProgressEntity progress = null;
         if (bookDTO.getBookProgress() != null){
+            progress = new BookProgressEntity();
             progress = bookProgressMapper.mapFromDtoToEntity(bookDTO.getBookProgress());
-            progress = bookProgressService.save(progress);
+            progress.setBook(bookEntity);
+            bookProgressService.save(progress);
+            bookEntity.setBookProgress(progress);
+            savedBook = bookService.save(bookEntity);
         }
-        bookEntity.setAuthor(author);
-        bookEntity.setGenre(genre);
-        bookEntity.setBookProgress(bookProgressEntity);
+        return new ResponseEntity<>(bookMapper.mapFromEntityToDto(savedBook), HttpStatus.CREATED);
 
-        if(!existing){
-            BookEntity savedBook = bookService.save(bookEntity);
-            return new ResponseEntity<>(bookMapper.mapFromEntityToDto(savedBook), HttpStatus.CREATED);
-        } else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PutMapping(path = "/books")

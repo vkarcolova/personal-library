@@ -55,4 +55,9 @@ public class AuthorServiceImpl implements AuthorService {
     public boolean existsByName(String name) {
         return authorRepository.existsByName(name);
     }
+
+    @Override
+    public Optional<AuthorEntity> getByName(String name) {
+        return authorRepository.findByName(name);
+    }
 }
